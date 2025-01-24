@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>廟宇資料搜尋</title>
+    <title>2025 宜蘭平安粥地圖</title>
     <!-- 引入 Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- 自訂樣式 -->
     <style>
+        /* 設定淺灰色背景 */
+        body {
+            background-color: #f8f9fa; /* Bootstrap 的 light 灰色 */
+        }
         .container {
-            margin-top: 20px;
+            margin-top: 40px;
+            margin-bottom: 40px;
         }
-        .temple-entry {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
+        .temple-card {
+            transition: transform 0.2s;
+            background-color: #ffffff; /* 白色卡片背景 */
+            border: 1px solid #dee2e6; /* 淺灰色邊框 */
         }
-        .temple-entry h3 {
-            margin-top: 0;
-        }
-        .map-link {
-            display: inline-block;
-            margin-top: 5px;
+        .temple-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         .map-icon {
             width: 24px;
@@ -31,6 +33,43 @@
             margin-left: 8px;
             vertical-align: middle;
             cursor: pointer;
+        }
+        .search-input {
+            position: relative;
+        }
+        .search-input .fa-search {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        .search-input input {
+            padding-left: 45px;
+        }
+        /* 淺粉紅色圖示樣式 */
+        .icon-pink {
+            color: #FFB6C1; /* 淺粉紅色 */
+        }
+        /* 調整導航列和頁腳的背景色為白色 */
+        .navbar, footer {
+            background-color: #ffffff; /* 白色背景 */
+        }
+        /* 調整導航列和頁腳的文字顏色 */
+        .navbar-brand, .nav-link, footer .text-center {
+            color: #d63384 !important; /* 深粉紅色文字 */
+        }
+        .nav-link:hover {
+            color: #ffb6c1 !important; /* 懸停時變為淺粉紅色 */
+        }
+        /* 調整按鈕顏色（如果有使用按鈕） */
+        .btn-primary {
+            background-color: #ffb6c1;
+            border-color: #ffb6c1;
+        }
+        .btn-primary:hover {
+            background-color: #ff99bb;
+            border-color: #ff99bb;
         }
     </style>
     <script src="data.js" defer></script>
@@ -49,26 +88,57 @@
                 );
 
                 if (filteredData.length === 0) {
-                    resultContainer.innerHTML = `<div class="text-center text-danger">找不到符合的資料。</div>`;
+                    resultContainer.innerHTML = `
+                        <div class="col-12">
+                            <div class="alert alert-danger text-center" role="alert">
+                                找不到符合的資料。
+                            </div>
+                        </div>`;
                     return;
                 }
 
                 filteredData.forEach(data => {
-                    const entry = document.createElement("div");
-                    entry.className = "temple-entry";
-                    entry.innerHTML = `
-                        <h3>${data.廟宇名稱}</h3>
-                        <p><strong>地區：</strong>${data.地區}</p>
-                        <p><strong>供餐日期：</strong>${data.供餐日期}</p>
-                        <p><strong>餐別：</strong>${data.餐別}</p>
-                        <p><strong>聯絡電話：</strong>${data.聯絡電話}</p>
-                        <p><strong>地址：</strong>${data.地址} 
-                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.地址)}" target="_blank">
-                                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/Google_Maps_icon_%282020%29.svg" alt="Google Map" class="map-icon">
+                    const col = document.createElement("div");
+                    col.className = "col-md-6 col-lg-4";
+
+                    const card = document.createElement("div");
+                    card.className = "card temple-card mb-4";
+
+                    const cardBody = document.createElement("div");
+                    cardBody.className = "card-body";
+
+                    cardBody.innerHTML = `
+                        <h5 class="card-title">
+                            <i class="fa-solid fa-mosque me-2 icon-pink"></i>${data.廟宇名稱}
+                        </h5>
+                        <p class="card-text">
+                            <i class="fa-solid fa-map-marker-alt me-2 icon-pink"></i>
+                            <strong>地區：</strong>${data.地區}
+                        </p>
+                        <p class="card-text">
+                            <i class="fa-solid fa-calendar-alt me-2 icon-pink"></i>
+                            <strong>供餐日期：</strong>${data.供餐日期}
+                        </p>
+                        <p class="card-text">
+                            <i class="fa-solid fa-utensils me-2 icon-pink"></i>
+                            <strong>餐別：</strong>${data.餐別}
+                        </p>
+                        <p class="card-text">
+                            <i class="fa-solid fa-phone me-2 icon-pink"></i>
+                            <strong>聯絡電話：</strong><a href="tel:${data.聯絡電話}" class="text-decoration-none">${data.聯絡電話}</a>
+                        </p>
+                        <p class="card-text">
+                            <i class="fa-solid fa-location-dot me-2 icon-pink"></i>
+                            <strong>地址：</strong>${data.地址}
+                            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.地址)}" target="_blank" class="ms-2" title="查看地圖">
+                                <i class="fa-solid fa-map-location-dot icon-pink"></i>
                             </a>
                         </p>
                     `;
-                    resultContainer.appendChild(entry);
+
+                    card.appendChild(cardBody);
+                    col.appendChild(card);
+                    resultContainer.appendChild(col);
                 });
             };
 
@@ -83,18 +153,55 @@
     </script>
 </head>
 <body>
+    <!-- 導覽列 -->
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fa-solid fa-map-location-dot me-2 icon-pink"></i>宜蘭平安粥地圖
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="切換導航">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">關於我們</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">聯絡方式</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主內容 -->
     <div class="container">
-        <div class="row mb-4">
+        <div class="row mb-5">
             <div class="col-12 text-center">
-                <h1 class="mb-3">廟宇資料搜尋</h1>
+                <h1 class="mb-3"><i class="fa-solid fa-search me-2 icon-pink"></i>廟宇資料搜尋</h1>
                 <p class="text-muted">輸入地區、廟宇名稱或關鍵字以進行搜尋</p>
-                <input type="text" id="search" class="form-control form-control-lg" placeholder="輸入地區、廟宇名稱或關鍵字">
+                <div class="search-input position-relative">
+                    <!-- <i class="fa-solid fa-magnifying-glass fa-lg icon-pink"></i> -->
+                    <input type="text" id="search" class="form-control form-control-lg" placeholder="輸入地區、廟宇名稱或關鍵字">
+                </div>
             </div>
         </div>
         <div id="result" class="row">
             <!-- 動態插入的搜尋結果 -->
         </div>
     </div>
+
+    <!-- 頁腳 -->
+    <footer class="bg-white text-center text-lg-start">
+        <div class="text-center p-3">
+            © 2025 宜蘭平安粥地圖. 版權所有.
+        </div>
+    </footer>
 
     <!-- 引入 Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
