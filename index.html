@@ -133,7 +133,8 @@
 
                     cardBody.innerHTML = `
                         <h5 class="card-title">
-                            <i class="fa-solid fa-mosque me-2 icon-pink"></i>${data.廟宇名稱}
+                            <i class="fa-solid fa-mosque me-2 icon-pink"></i><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.地址)}" target="_blank" class="ms-2" title="查看地圖">${data.廟宇名稱}
+                            </a>
                         </h5>
                         <p class="card-text">
                             <i class="fa-solid fa-map-marker-alt me-2 icon-pink"></i>
